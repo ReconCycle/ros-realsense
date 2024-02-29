@@ -32,7 +32,12 @@ RUN apt -q -qq update && \
 RUN rosdep update
 
 RUN mkdir -p /catkin_ws/src && cd /catkin_ws/src && \
-  git clone --depth 1 -b ros1-legacy https://github.com/IntelRealSense/realsense-ros.git && \
+  git clone https://github.com/IntelRealSense/realsense-ros.git && \
+  cd realsense-ros && \
+  git checkout tags/2.3.2
+# RUN mkdir -p /catkin_ws/src && cd /catkin_ws/src && \
+#   git clone --depth 1 -b ros1-legacy https://github.com/IntelRealSense/realsense-ros.git
+RUN cd /catkin_ws/src && \
   git clone --depth 1 https://github.com/pal-robotics/ddynamic_reconfigure
 RUN cd catkin_ws;
 RUN mv /bin/sh /bin/sh_tmp && ln -s /bin/bash /bin/sh
@@ -46,6 +51,7 @@ RUN touch /root/.bashrc && \
 RUN rm -rf /var/lib/apt/lists/*
 
 COPY rs_camera_and_aruco.launch /catkin_ws/src/realsense-ros/realsense2_camera/launch/
+COPY rs_camera.launch /catkin_ws/src/realsense-ros/realsense2_camera/launch/
 
 COPY ./ros_entrypoint.sh /
 ENTRYPOINT ["/ros_entrypoint.sh"]
