@@ -1,6 +1,6 @@
 FROM ros:noetic
 
-LABEL maintainer="iory ab.ioryz@gmail.com"
+LABEL maintainer="sebastian.ruiz@uni-goettingen.de"
 
 ENV ROS_DISTRO noetic
 
