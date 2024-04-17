@@ -10,7 +10,7 @@ services:
       - "/dev:/dev"
     environment:
       - ROS_MASTER_URI=http://10.20.0.1:11311
-      - ROS_IP=10.20.1.133 # $ hostname -I
+      - ROS_IP=10.20.0.22 # $ hostname -I
     
     # launch and immediately disable the camera
     command: bash -c "(sleep 10 && rosservice call /realsense/enable False) & roslaunch realsense2_camera rs_camera.launch enable:=false"
@@ -23,5 +23,8 @@ services:
 
     # this causes crashing:
     # initial_reset:=true
+
+    volumes:
+     - ./launch:/catkin_ws/src/realsense-ros/realsense2_camera/launch/
     
-    restart: "no"
+    restart: "unless-stopped"

@@ -1,28 +1,31 @@
-FROM ros:kinetic
+FROM ros:noetic
 
 LABEL maintainer="iory ab.ioryz@gmail.com"
 
-ENV ROS_DISTRO kinetic
+ENV ROS_DISTRO noetic
 
 RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
-RUN apt -q -qq update && \
+RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y \
     software-properties-common \
     wget \
-    apt-transport-https
+    apt-transport-https \
+    git
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE \
     && add-apt-repository "deb https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" -u
-# RUN add-apt-repository -y "deb https://librealsense.intel.com/Debian/apt-repo xenial main"
+
 RUN apt-get update -qq
 RUN apt-get install librealsense2-dkms --allow-unauthenticated -y
 RUN apt-get install librealsense2-dev --allow-unauthenticated -y
 
 RUN apt -q -qq update && \
   DEBIAN_FRONTEND=noninteractive apt install -y --allow-unauthenticated \
-  python-rosinstall \
-  python-catkin-tools \
+  python3-rosdep \
+  python3-rosinstall \
+  python3-vcstools \
+  python3-catkin-tools \
   ros-${ROS_DISTRO}-jsk-tools \
   ros-${ROS_DISTRO}-rgbd-launch \
   ros-${ROS_DISTRO}-image-transport-plugins \
@@ -49,9 +52,6 @@ RUN touch /root/.bashrc && \
   echo "rossetmaster localhost"
 
 RUN rm -rf /var/lib/apt/lists/*
-
-COPY rs_camera_and_aruco.launch /catkin_ws/src/realsense-ros/realsense2_camera/launch/
-COPY rs_camera.launch /catkin_ws/src/realsense-ros/realsense2_camera/launch/
 
 COPY ./ros_entrypoint.sh /
 ENTRYPOINT ["/ros_entrypoint.sh"]
